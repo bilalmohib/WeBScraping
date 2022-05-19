@@ -12,7 +12,7 @@ We can Scrap the Data of a website using below configurations.
 ### To import Particular Table Data from a website for Example Wikipedia
 To import the data from wikipedia table for example.this table
 
-![Wikipedia table](/Resources/WikipediaTabletoBeScrapped.png "wikipedia table")
+![Wikipedia table](/WikipediaTabletoBeScrapped.png "wikipedia table")
 
 Now to know which table it is type the following js command in the console of the page.By opening console of the browser.
 ```js
@@ -21,11 +21,11 @@ Now to know which table it is type the following js command in the console of th
 
 It will return all the tables in the page like this.
 
-![Website Tables](/Resources/TablesList.png "Website Tables")
+![Website Tables](/TablesList.png "Website Tables")
 
 Now to know which table number we want to get just hover on the table classes names and the table you want will get highlighted as shown below:-
 
-![Highlighted Tables](/Resources/highlightedtable.png "Highlighted Tables")
+![Highlighted Tables](/highlightedtable.png "Highlighted Tables")
 
 So now We know that our table number is = 4
 
@@ -41,8 +41,8 @@ So the command will become something like this.
 ```
 Enter the command here like this
 
-![Output Data in Google Sheet](/Resources/QueryTable.png "Output Data in Google Sheet")
+![Output Data in Google Sheet](/QueryTable.png "Output Data in Google Sheet")
 
 This command will give all the table data of table 4 in the specified url so this output will be shown
 
-![Output Data in Google Sheet](/Resources/TableOutput.png "Output Data in Google Sheet")
+![Output Data in Google Sheet](/TableOutput.png "Output Data in Google Sheet")
