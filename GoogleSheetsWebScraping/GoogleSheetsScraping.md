@@ -6,7 +6,7 @@ There are four main methods used in google sheets to scrap the data
 - =importfeed()
 - =importxml()
 
-## Using =importhtml()
+## 1) =importhtml()
 We can Scrap the Data of a website using below configurations.
 
 ### To import Particular Table Data from a website for Example Wikipedia
@@ -46,3 +46,9 @@ Enter the command here like this
 This command will give all the table data of table 4 in the specified url so this output will be shown
 
 ![Output Data in Google Sheet](https://raw.githubusercontent.com/Muhammad-Bilal-7896/WeBScraping/crystal/GoogleSheetsWebScraping/Resources/TableOutput.png "Output Data in Google Sheet")
+
+## 2) =importdata()
+This function is used to get or extract all the data from csv file and will display all data on google sheets.
+
+## 3) =importfeed()
+This function is used to get all data using web page link.Will extract automatically.
