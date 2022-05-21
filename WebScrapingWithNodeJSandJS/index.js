@@ -1,4 +1,4 @@
-const fetch = require("node-fetch");
+import fetch from "node-fetch"
 const cheerio = require("cheerio");
 
 // function to get the raw data
@@ -25,47 +25,48 @@ const getCricketWorldCupsList = async () => {
       .children[1].children;
 
    console.log("Year --- Winner --- Runner");
-   worldCupsDataTable.forEach((row) => {
-      // extracting `td` tags
-      if (row.name === "tr") {
-         let year = null,
-            winner = null,
-            runner = null;
+   console.log(worldCupsDataTable)
+   // worldCupsDataTable.forEach((row) => {
+   //    // extracting `td` tags
+   //    if (row.name === "tr") {
+   //       let year = null,
+   //          winner = null,
+   //          runner = null;
 
-         const columns = row.children.filter((column) => column.name === "td");
+   //       const columns = row.children.filter((column) => column.name === "td");
 
-         // extracting year
-         const yearColumn = columns[0];
-         if (yearColumn) {
-            year = yearColumn.children[0];
-            if (year) {
-               year = year.children[0].data;
-            }
-         }
+   //       // extracting year
+   //       const yearColumn = columns[0];
+   //       if (yearColumn) {
+   //          year = yearColumn.children[0];
+   //          if (year) {
+   //             year = year.children[0].data;
+   //          }
+   //       }
 
-         // extracting winner
-         const winnerColumn = columns[3];
-         if (winnerColumn) {
-            winner = winnerColumn.children[1];
-            if (winner) {
-               winner = winner.children[0].data;
-            }
-         }
+   //       // extracting winner
+   //       const winnerColumn = columns[3];
+   //       if (winnerColumn) {
+   //          winner = winnerColumn.children[1];
+   //          if (winner) {
+   //             winner = winner.children[0].data;
+   //          }
+   //       }
 
-         // extracting runner
-         const runnerColumn = columns[5];
-         if (runnerColumn) {
-            runner = runnerColumn.children[1];
-            if (runner) {
-               runner = runner.children[0].data;
-            }
-         }
+   //       // extracting runner
+   //       const runnerColumn = columns[5];
+   //       if (runnerColumn) {
+   //          runner = runnerColumn.children[1];
+   //          if (runner) {
+   //             runner = runner.children[0].data;
+   //          }
+   //       }
 
-         if (year && winner && runner) {
-            console.log(`${year} --- ${winner} --- ${runner}`);
-         }
-      }
-   });
+   //       if (year && winner && runner) {
+   //          console.log(`${year} --- ${winner} --- ${runner}`);
+   //       }
+   //    }
+   // });
 };
 
 // invoking the main function
