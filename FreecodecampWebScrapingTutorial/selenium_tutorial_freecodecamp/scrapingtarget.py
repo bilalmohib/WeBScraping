@@ -16,8 +16,10 @@ time.sleep(5)
 # element2.click()
 
 button = wait(browser, 10).until(EC.presence_of_element_located(
-    (By.XPATH, '//*[@id="schnellsuche"]/input[2]')))
+    (By.CLASS_NAME, 'selector-title')))
 button.click()
+
+time.sleep(10)
 
 # element2 = browser.find_element(By.XPATH, '//*[@id="schnellsuche"]/input[2]')
 # element2.click()

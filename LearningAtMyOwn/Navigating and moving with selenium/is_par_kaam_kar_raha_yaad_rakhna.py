@@ -75,3 +75,6 @@ def main():
     # element2.click()
     search_it_idiot = wait(browser, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="schnellsuche"]/input[2]')))
     search_it_idiot.click()
+    time.sleep(25)
+
+main()
