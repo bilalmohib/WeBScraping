@@ -61,11 +61,11 @@ def findAllClubsInALeague(url,driver):
     }
     # Writing data finally to csv file
     df = pd.DataFrame(data)
-    df.to_csv(url + "." + "csv", index=False)
+    df.to_csv("check.csv", index=True)
     return club_nameArray
 
 def get_league_search_data(url,driver):
-    url_to_scrap = "https://www.transfermarkt.us/schnellsuche/ergebnis/schnellsuche?query=JAPAN+FOOTBALL+LEAGUE"
+    url_to_scrap = url
     driver.get(url_to_scrap)
     content = driver.page_source
     soup = BeautifulSoup(content, features="lxml")
@@ -78,11 +78,11 @@ def get_league_search_data(url,driver):
                  'td')[1]
 #     league_name.a.click()
 #     print(league_name.a)
-    link_to_move_to = league_name.a
-    print(link_to_move_to)
-
-    time.sleep(60)
-    
+    anchor_tag = league_name.a
+    link_to_move = anchor_tag['href']
+    combined_url_where_to_move = "https://www.transfermarkt.us" + str(link_to_move)
+    print("Found The Next URL Where I have to go: " + combined_url_where_to_move)
+    return combined_url_where_to_move
 
 
     # Defining Arrays to store data
@@ -135,14 +135,20 @@ def main():
     browser.get("https://www.transfermarkt.us/")
     element = browser.find_element(By.XPATH, '//*[@id="schnellsuche"]/input[1]')
     element.send_keys("J1 League")
-    time.sleep(20)
+    time.sleep(15)
 
     search_it_idiot = wait(browser, 40).until(EC.presence_of_element_located((By.XPATH, '//*[@id="schnellsuche"]/input[2]')))
     search_it_idiot.click()
 
     # Get the current url 
     current_url = browser.current_url
-    get_league_search_data(current_url,browser)
+    # Function to get the url where the searched leaugue is present 
+    league_url = get_league_search_data(current_url,browser)
+    
+    # Now Got the url and now getting into next round 2 to find the all clubs in that league.
+    # Passing arguement league url to the function findAllClubsInALeague
+    findAllClubsInALeague(league_url,browser)
+
     time.sleep(25)
 
 main()
