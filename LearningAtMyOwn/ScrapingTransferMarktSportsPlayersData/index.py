@@ -1,6 +1,10 @@
-from asyncio.windows_events import NULL
-from itertools import count
+import os
+from xml.etree.ElementPath import xpath_tokenizer
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+import time
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait as wait
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
@@ -69,12 +73,8 @@ try:
         df.to_csv(league + "." + "csv", index=False)
         return club_nameArray
 
-    def findAllPlayersInClub(club):
-        driver = webdriver.Chrome(
-            executable_path='C:/ChromeDriver/chromedriver.exe')
-        url_to_scrap = "https://www.transfermarkt.us/" + \
-            club + "/kader/verein/3958/saison_id/2021/plus/1"
-        driver.get(url_to_scrap)
+    def findAllPlayersInClub(url,driver):
+        driver.get(url)
         content = driver.page_source
         soup = BeautifulSoup(content, features="lxml")
         # print(soup)
@@ -100,78 +100,84 @@ try:
         for player_data in players_data:
             count = count + 1
             # Extracting the data
-            player_name = club_data.find(
+            player_name = player_data.find(
                 'td', class_="hauptlink no-border-links").a.text
-            player_contract_price = club_data.find_all(
+            player_contract_price = player_data.find_all(
                 'td', class_="zentriert")[1].a.text
-            player_position = club_data.find_all(
+            player_position = player_data.find_all(
                 'td', class_="zentriert")[2].text
-            player_club = club_data.find_all('td', class_="zentriert")[3].text
-            player_league = club_data.find_all('td', class_="rechts")[0].text
-            player_country = club_data.find_all(
+            player_club = player_data.find_all('td', class_="zentriert")[3].text
+            player_league = player_data.find_all('td', class_="rechts")[0].text
+            player_country = player_data.find_all(
                 'td', class_="rechts")[1].a.text
-            player_contract_start = club_data.find_all(
+            player_contract_start = player_data.find_all(
                 'td', class_="rechts")[1].a.text
-            player_contract_end = club_data.find_all(
+            player_contract_end = player_data.find_all(
                 'td', class_="rechts")[1].a.text
-            player_date_of_birth = club_data.find_all(
+            player_date_of_birth = player_data.find_all(
                 'td', class_="rechts")[1].a.text
+
+            print("===> ",player_name)
 
 
             # Appending the values to the arrays
-            player_nameArray.append(player_name)
-            player_contract_priceArray.append(player_contract_price)
-            player_positionArray.append(player_position)
-            player_clubArray.append(player_club)
-            player_leagueArray.append(player_league)
-            player_countryArray.append(player_country)
-            player_contract_startArray.append(player_contract_start)
-            player_contract_endArray.append(player_contract_end)
-            player_date_of_birthArray.append(player_date_of_birth)
-            indexArray.append(count)
+        #     player_nameArray.append(player_name)
+        #     player_contract_priceArray.append(player_contract_price)
+        #     player_positionArray.append(player_position)
+        #     player_clubArray.append(player_club)
+        #     player_leagueArray.append(player_league)
+        #     player_countryArray.append(player_country)
+        #     player_contract_startArray.append(player_contract_start)
+        #     player_contract_endArray.append(player_contract_end)
+        #     player_date_of_birthArray.append(player_date_of_birth)
+        #     indexArray.append(count)
 
-            # print(club_totalMarketValue)
-            # break
-        data = {
-            "Column A": NULL,
-            "Column B": NULL,
-            "Serial No.": club_ageArray,
-            "Column D": NULL,
-            "Column E": NULL,
-            "Player Name": club_totalMarketValueArray,
-            "Column G": club_totalMarketValueArray,
-            "Column H": club_foreignersArray,
-            "Column I": club_marketValueArray,
-            "Contract Price(USD)": club_totalMarketValueArray,
-            "Column K": club_totalMarketValueArray,
-            "Column L":NULL,
-            "Player Position":club_totalMarketValueArray,
-            "Club Name":club_totalMarketValueArray,
-            "League Name":club_totalMarketValueArray,
-            "Column P":club_totalMarketValueArray,
-            "Country":country,
-            "Club Contract Start Date":safdsda,
-            "Club Contract End Date":asdf,
-            "Club %":sdaf,
-            "Club Starting No":sdafsda,
-            "Date of birth of the player":daset
-        }
-        # Writing data finally to csv file
-        df = pd.DataFrame(data)
-        df.to_csv(club + "." + "csv", index=False)
-        return player_nameArray
+        #     # print(club_totalMarketValue)
+        #     # break
+        # data = {
+        #     "Column A": NULL,
+        #     "Column B": NULL,
+        #     "Serial No.": indexArray,
+        #     "Column D": NULL,
+        #     "Column E": NULL,
+        #     "Player Name": player_nameArray,
+        #     "Column G": NULL,
+        #     "Column H": NULL,
+        #     "Column I": NULL,
+        #     "Contract Price(USD)": player_contract_priceArray,
+        #     "Column K": NULL,
+        #     "Column L":NULL,
+        #     "Player Position":player_positionArray,
+        #     "Club Name":player_clubArray,
+        #     "League Name":player_leagueArray,
+        #     "Column P":NULL,
+        #     "Country":player_countryArray,
+        #     "Club Contract Start Date":player_contract_startArray,
+        #     "Club Contract End Date":player_contract_endArray,
+        #     "Club %":NULL,
+        #     "Club Starting No":NULL,
+        #     "Date of birth of the player":player_date_of_birthArray
+        # }
+        # # Writing data finally to csv file
+        # df = pd.DataFrame(data)
+        # df.to_csv(club + "." + "csv", index=False)
+        # return player_nameArray
 
     # Main function Starts here
 
     def main():
         print("Starting Web Scraper")
-        league_data = findAllClubsInALeague("j1-league")
+        os.environ['PATH'] += r"C:/ChromeDriver"
+        browser = webdriver.Chrome()
+        #browser.get("https://www.transfermarkt.us/")
+        #league_data = findAllClubsInALeague("j1-league")
 
-        players_data = findAllPlayersInClub("vissel-kobe")
+        club_players_url = "https://www.transfermarkt.us/vissel-kobe/startseite/verein/3958/saison_id/2021"
+        findAllPlayersInClub(club_players_url,browser)
 
         # print(league_data)
-        for league_names in league_data:
-            print(league_names)
+        # for league_names in league_data:
+        #     print(league_names)
 
     main()
 
