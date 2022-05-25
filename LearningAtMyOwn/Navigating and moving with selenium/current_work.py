@@ -102,10 +102,13 @@ def findAllPlayersInClub(url, driver):
     soup = BeautifulSoup(content, features="lxml")
     # print(soup)
 
-    players_data = soup.find('table', class_="items").find(
-        'tbody').find_all('tr')
+    # To find the correct data I have to find even and odd both and concatenate them other wise breakup occurs and false data comes in
+    players_data_odd = soup.find('table', class_="items").find(
+        'tbody').find_all('tr',class_="odd")
+    # players_data_even = soup.find('table', class_="items").find(
+    #     'tbody').find_all('tr',class_="even")
 
-    # print(players_data[0])
+    print("\n\n\n -------------- Players Data Length is equal to : "+str(len(players_data_odd)) + "   ------------       ")
 
     # Defining Arrays to store data
     player_nameArray = []
@@ -124,24 +127,21 @@ def findAllPlayersInClub(url, driver):
         count = count + 1
         # Extracting the data
         player_name = player_data.find(
-            'td', class_="hauptlink")
-        player_contract_price = player_data.find(
-            'td', class_="rechts hauptlink").text
-        player_position = player_data.find_all(
-                'td')[4].text
-        player_SignedFrom = player_data.find_all('td', class_="zentriert")[6].a.img["alt"]
-        player_club = soup.find('div', class_="dataName").h1.span.text
-        player_league = soup.find('div', class_="dataZusatzDaten").span.a.text
-        player_country = player_data.find_all('td', class_="zentriert")[2].img["title"]
-        player_contract_start = player_data.find_all('td', class_="zentriert")[5].text
-        # player_contract_end = player_data.find_all(
-        #         'td', class_="rechts")[1].a.text
-        # player_date_of_birth = player_data.find_all(
-        #         'td', class_="rechts")[1].a.text
+            'td', class_="posrela")
+        # player_contract_price = player_data.find(
+        #     'td', class_="rechts hauptlink").text
+        # player_position = player_data.find_all(
+        #         'td')[4].text
+        # player_SignedFrom = player_data.find_all('td', class_="zentriert")[6].a.img["alt"]
+        # player_club = soup.find('div', class_="dataName").h1.span.text
+        # player_league = soup.find('div', class_="dataZusatzDaten").span.a.text
+        # player_country = player_data.find_all('td', class_="zentriert")[2].img["title"]
+        # player_contract_start = player_data.find_all('td', class_="zentriert")[5].text
+        # player_contract_end = player_data.find_all('td', class_="zentriert")[7].text
+        # player_date_of_birth = player_data.find_all('td', class_="zentriert")[1].text
 
-        print("\n\n\n\n\n\n\n\nPlayer_contract_start ===> ", player_contract_start)
-        print("\n\n\n\n\n\n\n\n")
-        break
+        # print("\nPlayer name ===> ", player_name)
+        # print("\n\n\n\n\n\n\n\n")
 
         # Appending the values to the arrays
         # player_nameArray.append(player_name)
@@ -181,7 +181,7 @@ def findAllPlayersInClub(url, driver):
     # }
     # Writing data finally to csv file
     # df = pd.DataFrame(data)
-    # df.to_csv(club + "." + "csv", index=False)
+    # df.to_csv("AllPlayers" + "." + "csv", index=False)
     # return player_nameArray
 
 
