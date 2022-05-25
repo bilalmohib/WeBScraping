@@ -109,8 +109,13 @@ def findAllPlayersInClub(url, driver):
         'tbody').find_all('tr',class_="even")
 
     players_data = players_data_odd + players_data_even
+
+    print("\n\n\n\n\n")
+
+    print(players_data)
     
     print("\n\n\n -------------- Players Data Length is equal to : "+str(len(players_data)) + "   ------------")
+
 
     # Defining Arrays to store data
     player_nameArray = []
@@ -129,7 +134,7 @@ def findAllPlayersInClub(url, driver):
         count = count + 1
         # Extracting the data
         player_name = player_data.find(
-            'td', class_="posrela")
+            'td', class_="hauptlink").a.text
         # player_contract_price = player_data.find(
         #     'td', class_="rechts hauptlink").text
         # player_position = player_data.find_all(
@@ -142,7 +147,7 @@ def findAllPlayersInClub(url, driver):
         # player_contract_end = player_data.find_all('td', class_="zentriert")[7].text
         # player_date_of_birth = player_data.find_all('td', class_="zentriert")[1].text
 
-        # print("\nPlayer name ===> ", player_name)
+        print("\nPlayer name ===> ", player_name)
         # print("\n\n\n\n\n\n\n\n")
 
         # Appending the values to the arrays
