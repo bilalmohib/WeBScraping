@@ -82,7 +82,7 @@ def findAllClubsInALeague(url, driver):
 
 
 def findAllPlayersInClub(urlArray, driver):
-    url_to_scrap = urlArray
+    url_to_scrap = urlArray[0]
     driver.get(url_to_scrap)
 
     # go back to main frame
@@ -246,8 +246,7 @@ def main():
     element = browser.find_element(
         By.XPATH, '//*[@id="schnellsuche"]/input[1]')
     # Getting the user input
-    league_name = input(
-        "Please enter the leaugue name(strictly same name no spelling mistakes please)")
+    league_name = input("Please enter the leaugue name(strictly same name no spelling mistakes please): ")
     element.send_keys(league_name)
     time.sleep(15)
 
@@ -264,8 +263,8 @@ def main():
     # And now Passing arguement league url to the function findAllClubsInALeague
     all_clubs_in_league_url_array = findAllClubsInALeague(league_url, browser)
 
-    print("Got All the clubs url where I have to go now i will go : " +
-          all_clubs_in_league_url_array)
+    print("Got All the clubs url where I have to go now i will go : ")
+    print(all_clubs_in_league_url_array)
 
     # url_for_players_of_league = "https://www.transfermarkt.us/vissel-kobe/startseite/verein/3958/saison_id/2021/"
 
