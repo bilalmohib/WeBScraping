@@ -105,10 +105,12 @@ def findAllPlayersInClub(url, driver):
     # To find the correct data I have to find even and odd both and concatenate them other wise breakup occurs and false data comes in
     players_data_odd = soup.find('table', class_="items").find(
         'tbody').find_all('tr',class_="odd")
-    # players_data_even = soup.find('table', class_="items").find(
-    #     'tbody').find_all('tr',class_="even")
+    players_data_even = soup.find('table', class_="items").find(
+        'tbody').find_all('tr',class_="even")
 
-    print("\n\n\n -------------- Players Data Length is equal to : "+str(len(players_data_odd)) + "   ------------       ")
+    players_data = players_data_odd + players_data_even
+    
+    print("\n\n\n -------------- Players Data Length is equal to : "+str(len(players_data)) + "   ------------")
 
     # Defining Arrays to store data
     player_nameArray = []
