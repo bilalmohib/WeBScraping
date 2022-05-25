@@ -11,15 +11,18 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 
-#To find all clubs in a league
-def findAllClubsInALeague(url,driver):
+# To find all clubs in a league
+
+
+def findAllClubsInALeague(url, driver):
     url_to_scrap = url
     driver.get(url_to_scrap)
     content = driver.page_source
     soup = BeautifulSoup(content, features="lxml")
     # print(soup)
 
-    clubs_data = soup.find('table', class_="items").find('tbody').find_all('tr')
+    clubs_data = soup.find('table', class_="items").find(
+        'tbody').find_all('tr')
 
     # print(players_data[0])
 
@@ -35,20 +38,20 @@ def findAllClubsInALeague(url,driver):
     for club_data in clubs_data:
         # Extracting the data
         club_name = club_data.find(
-                'td', class_="hauptlink no-border-links").a.text
+            'td', class_="hauptlink no-border-links").a.text
         club_link = club_data.find(
-                'td', class_="hauptlink no-border-links").a['href']
+            'td', class_="hauptlink no-border-links").a['href']
         combined_club_link = "https://www.transfermarkt.us" + str(club_link)
-        #print(combined_club_link)
-        
+        # print(combined_club_link)
+
         club_squad = club_data.find_all('td', class_="zentriert")[1].a.text
         club_age = club_data.find_all('td', class_="zentriert")[2].text
         club_foreigners = club_data.find_all(
-                'td', class_="zentriert")[3].text
+            'td', class_="zentriert")[3].text
         club_marketValue = club_data.find_all(
-                'td', class_="rechts")[0].text
+            'td', class_="rechts")[0].text
         club_totalMarketValue = club_data.find_all(
-                'td', class_="rechts")[1].a.text
+            'td', class_="rechts")[1].a.text
 
         # Appending the values to the arrays
         club_nameArray.append(club_name)
@@ -62,37 +65,45 @@ def findAllClubsInALeague(url,driver):
     # print(club_totalMarketValue)
     # break
     data = {
-            "clubsNames": club_nameArray,
-            "clubLinkArray":club_linkArray,
-            "clubSquad": club_squadArray,
-            "clubAge": club_ageArray,
-            "clubForeigners": club_foreignersArray,
-            "clubMarketValue": club_marketValueArray,
-            "clubTotalMarketValue": club_totalMarketValueArray
+        "clubsNames": club_nameArray,
+        "clubLinkArray": club_linkArray,
+        "clubSquad": club_squadArray,
+        "clubAge": club_ageArray,
+        "clubForeigners": club_foreignersArray,
+        "clubMarketValue": club_marketValueArray,
+        "clubTotalMarketValue": club_totalMarketValueArray
     }
     # Writing data finally to csv file
     df = pd.DataFrame(data)
     df.to_csv("check.csv", index=True)
     return club_linkArray
 
-#To find all players in a club
-def findAllPlayersInClub(url,driver):
+# To find all players in a club
+
+
+def findAllPlayersInClub(url, driver):
     url_to_scrap = url
     driver.get(url_to_scrap)
-    content = driver.page_source
 
     # go back to main frame
     driver.switch_to.default_content()
 
     # here's the trick, what you are looking for is inside a "shadow-root" DOM so to access it you need to execute the script and then use CSS selector, I don't think XPATH works here:
-    element2 = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "#main > div:nth-child(11) > div.large-8.columns > div > div.tm-tabs > a:nth-child(2) > div > span")))
+    element2 = WebDriverWait(driver, 50).until(EC.element_to_be_clickable(
+        (By.XPATH, '//*[@id="main"]/div[6]/div[1]/div/div[3]/a[2]')))
+    time.sleep(20)
+    element2.click()
+    print("Finally Got ", element2)
 
-    print("Checking here" ,element2)
+    # driver.refresh()
+
+    content = driver.page_source
 
     soup = BeautifulSoup(content, features="lxml")
     # print(soup)
 
-    players_data = soup.find('table', class_="items").find('tbody').find_all('tr')
+    players_data = soup.find('table', class_="items").find(
+        'tbody').find_all('tr')
 
     # print(players_data[0])
 
@@ -112,26 +123,25 @@ def findAllPlayersInClub(url,driver):
     for player_data in players_data:
         count = count + 1
         # Extracting the data
-        player_name = player_data.find_all(
-                'td',class_="hauptlink")
-        # player_contract_price = player_data.find_all(
-        #         'td', class_="zentriert")[1].a.text
-        # player_position = player_data.find_all(
-        #         'td', class_="zentriert")[2].text
-        # player_club = player_data.find_all('td', class_="zentriert")[3].text
-        # player_league = player_data.find_all('td', class_="rechts")[0].text
-        # player_country = player_data.find_all(
-        #         'td', class_="rechts")[1].a.text
-        # player_contract_start = player_data.find_all(
-        #         'td', class_="rechts")[1].a.text
+        player_name = player_data.find(
+            'td', class_="hauptlink")
+        player_contract_price = player_data.find(
+            'td', class_="rechts hauptlink").text
+        player_position = player_data.find_all(
+                'td')[4].text
+        player_SignedFrom = player_data.find_all('td', class_="zentriert")[6].a.img["alt"]
+        player_club = soup.find('div', class_="dataName").h1.span.text
+        player_league = soup.find('div', class_="dataZusatzDaten").span.a.text
+        player_country = player_data.find_all('td', class_="zentriert")[2].img["title"]
+        player_contract_start = player_data.find_all('td', class_="zentriert")[5].text
         # player_contract_end = player_data.find_all(
         #         'td', class_="rechts")[1].a.text
         # player_date_of_birth = player_data.find_all(
         #         'td', class_="rechts")[1].a.text
 
-        print("===> ",player_name)
+        print("\n\n\n\n\n\n\n\nPlayer_contract_start ===> ", player_contract_start)
+        print("\n\n\n\n\n\n\n\n")
         break
-
 
         # Appending the values to the arrays
         # player_nameArray.append(player_name)
@@ -145,8 +155,6 @@ def findAllPlayersInClub(url,driver):
         # player_date_of_birthArray.append(player_date_of_birth)
         # indexArray.append(count)
 
-        #  # print(club_totalMarketValue)
-        #  # break
     # data = {
     #         "Column A": NULL,
     #         "Column B": NULL,
@@ -177,15 +185,15 @@ def findAllPlayersInClub(url,driver):
     # return player_nameArray
 
 
-#To find all players in a club
+# To find all players in a club
 
-def get_league_search_data(url,driver):
+def get_league_search_data(url, driver):
     url_to_scrap = url
     driver.get(url_to_scrap)
     content = driver.page_source
 
 #     time.sleep(10)
- 
+
     soup = BeautifulSoup(content, features="lxml")
     # print(soup)
 
@@ -193,17 +201,16 @@ def get_league_search_data(url,driver):
 
     club_data = soup.find('table', class_="items").find('tbody').find_all('tr')
 
-    #print(club_data[0])
+    # print(club_data[0])
     league_name = club_data[0].find_all(
-                 'td')[1]
+        'td')[1]
 #     league_name.a.click()
 #     print(league_name.a)
     anchor_tag = league_name.a
     link_to_move = anchor_tag['href']
-    combined_url_where_to_move = "https://www.transfermarkt.us" + str(link_to_move) + "/plus/1"
+    combined_url_where_to_move = "https://www.transfermarkt.us" + str(link_to_move)
     print("Found The Next URL Where I have to go: " + combined_url_where_to_move)
     return combined_url_where_to_move
-
 
     # Defining Arrays to store data
 #     club_nameArray = []
@@ -249,6 +256,7 @@ def get_league_search_data(url,driver):
 #     df.to_csv(url + "." + "csv", index=False)
 #     return club_nameArray
 
+
 def main():
     os.environ['PATH'] += r"C:/ChromeDriver"
     browser = webdriver.Chrome()
@@ -260,21 +268,22 @@ def main():
     # search_it_idiot = wait(browser, 50).until(EC.presence_of_element_located((By.XPATH, '//*[@id="schnellsuche"]/input[2]')))
     # search_it_idiot.click()
 
-    # Get the current url 
+    # Get the current url
     #current_url = browser.current_url
-    # Function to get the url where the searched leaugue is present 
+    # Function to get the url where the searched leaugue is present
     #league_url = get_league_search_data(current_url,browser)
-    
+
     # Now Got the url and now getting into next round 2 to find the all clubs in that league.
     # Passing arguement league url to the function findAllClubsInALeague
     #league_names_array = findAllClubsInALeague(league_url,browser)
 
-    #print("Got All the clubs url where I have to go now i will go : "+league_names_array)    
+    #print("Got All the clubs url where I have to go now i will go : "+league_names_array)
 
     url_for_players_of_league = "https://www.transfermarkt.us/vissel-kobe/startseite/verein/3958/saison_id/2021/"
 
-    findAllPlayersInClub(url_for_players_of_league,browser)
+    findAllPlayersInClub(url_for_players_of_league, browser)
 
     time.sleep(25)
+
 
 main()
