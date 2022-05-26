@@ -11,6 +11,10 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 
+
+def clear_console():
+    os.system('cls')
+
 # To find all clubs in a league
 
 
@@ -82,40 +86,6 @@ def findAllClubsInALeague(url, driver):
 
 
 def findAllPlayersInClub(urlArray, driver):
-    url_to_scrap = urlArray[0]
-    driver.get(url_to_scrap)
-
-    # go back to main frame
-    driver.switch_to.default_content()
-
-    # here's the trick, what you are looking for is inside a "shadow-root" DOM so to access it you need to execute the script and then use CSS selector, I don't think XPATH works here:
-    element2 = WebDriverWait(driver, 50).until(EC.element_to_be_clickable(
-        (By.XPATH, '//*[@id="main"]/div[6]/div[1]/div/div[3]/a[2]')))
-    time.sleep(20)
-    element2.click()
-    print("Finally Got ", element2)
-
-    # driver.refresh()
-
-    content = driver.page_source
-
-    soup = BeautifulSoup(content, features="lxml")
-    # print(soup)
-
-    # To find the correct data I have to find even and odd both and concatenate them other wise breakup occurs and false data comes in
-    players_data_odd = soup.find('table', class_="items").find(
-        'tbody').find_all('tr', class_="odd")
-    players_data_even = soup.find('table', class_="items").find(
-        'tbody').find_all('tr', class_="even")
-
-    players_data = players_data_odd + players_data_even
-
-    print("\n\n\n\n\n")
-
-    print(players_data)
-
-    print("\n\n\n -------------- Players Data Length is equal to : " +
-          str(len(players_data)) + "   ------------")
 
     # Defining Arrays to store data
     player_nameArray = []
@@ -130,51 +100,91 @@ def findAllPlayersInClub(urlArray, driver):
     indexArray = []
 
     count = 0
-    for player_data in players_data:
-        count = count + 1
-        # Extracting the data
-        player_name = player_data.find(
-            'td', class_="hauptlink").a.text
-        # Removing left and right extra spaces
-        player_name = player_name.strip()
-        player_contract_price = player_data.find(
-            'td', class_="rechts hauptlink").text
-        player_contract_price = player_contract_price.strip()
-        player_position = player_data.find_all(
-            'td')[4].text
-        player_position = player_position.strip()
-        #player_SignedFrom = player_data.find_all('td', class_="zentriert")[6].a.img["alt"]
-        player_club = soup.find('div', class_="dataName").h1.span.text
-        player_club = player_club.strip()
-        player_league = soup.find('div', class_="dataZusatzDaten").span.a.text
-        player_league = player_league.strip()
-        player_country = player_data.find_all(
-            'td', class_="zentriert")[2].img["title"]
-        player_country = player_country.strip()
-        player_contract_start = player_data.find_all(
-            'td', class_="zentriert")[5].text
-        player_contract_start = player_contract_start.strip()
-        player_contract_end = player_data.find_all(
-            'td', class_="zentriert")[7].text
-        player_contract_end = player_contract_end.strip()
-        player_date_of_birth = player_data.find_all(
-            'td', class_="zentriert")[1].text
-        player_date_of_birth = player_date_of_birth.strip()
 
-        # print("\nPlayer name ===> ", player_name)
-        # print("\n\n\n\n\n\n\n\n")
+    for url in urlArray:
+        print("Scraping Data From This Url right now: "+url)
+        url_to_scrap = url
+        driver.get(url_to_scrap)
 
-        # Appending the values to the arrays
-        player_nameArray.append(player_name)
-        player_contract_priceArray.append(player_contract_price)
-        player_positionArray.append(player_position)
-        player_clubArray.append(player_club)
-        player_leagueArray.append(player_league)
-        player_countryArray.append(player_country)
-        player_contract_startArray.append(player_contract_start)
-        player_contract_endArray.append(player_contract_end)
-        player_date_of_birthArray.append(player_date_of_birth)
-        indexArray.append(count)
+        # go back to main frame
+        driver.switch_to.default_content()
+
+        # time.sleep(30)
+        # Switching To Detailed View
+        element2 = WebDriverWait(driver, 100).until(EC.presence_of_element_located(
+            (By.XPATH, '//*[@id="main"]/div[6]/div[1]/div/div[3]/a[2]')))
+        # time.sleep(30)
+        element2.click()
+        print("Finally Got ", element2)
+
+        # driver.refresh()
+
+        content = driver.page_source
+
+        soup = BeautifulSoup(content, features="lxml")
+        # print(soup)
+
+        # To find the correct data I have to find even and odd both and concatenate them other wise breakup occurs and false data comes in
+        players_data_odd = soup.find('table', class_="items").find(
+            'tbody').find_all('tr', class_="odd")
+        players_data_even = soup.find('table', class_="items").find(
+            'tbody').find_all('tr', class_="even")
+
+        players_data = players_data_odd + players_data_even
+
+        print("\n\n\n\n\n")
+
+        print(players_data)
+
+        print("\n\n\n -------------- Players Data Length is equal to : " +
+              str(len(players_data)) + "   ------------")
+
+        for player_data in players_data:
+            count = count + 1
+            # Extracting the data
+            player_name = player_data.find(
+                'td', class_="hauptlink").a.text
+            # Removing left and right extra spaces
+            player_name = player_name.strip()
+            player_contract_price = player_data.find(
+                'td', class_="rechts hauptlink").text
+            player_contract_price = player_contract_price.strip()
+            player_position = player_data.find_all(
+                'td')[4].text
+            player_position = player_position.strip()
+            #player_SignedFrom = player_data.find_all('td', class_="zentriert")[6].a.img["alt"]
+            player_club = soup.find('div', class_="dataName").h1.span.text
+            player_club = player_club.strip()
+            player_league = soup.find(
+                'div', class_="dataZusatzDaten").span.a.text
+            player_league = player_league.strip()
+            player_country = player_data.find_all(
+                'td', class_="zentriert")[2].img["title"]
+            player_country = player_country.strip()
+            player_contract_start = player_data.find_all(
+                'td', class_="zentriert")[5].text
+            player_contract_start = player_contract_start.strip()
+            player_contract_end = player_data.find_all(
+                'td', class_="zentriert")[7].text
+            player_contract_end = player_contract_end.strip()
+            player_date_of_birth = player_data.find_all(
+                'td', class_="zentriert")[1].text
+            player_date_of_birth = player_date_of_birth.strip()
+
+            # print("\nPlayer name ===> ", player_name)
+            # print("\n\n\n\n\n\n\n\n")
+
+            # Appending the values to the arrays
+            player_nameArray.append(player_name)
+            player_contract_priceArray.append(player_contract_price)
+            player_positionArray.append(player_position)
+            player_clubArray.append(player_club)
+            player_leagueArray.append(player_league)
+            player_countryArray.append(player_country)
+            player_contract_startArray.append(player_contract_start)
+            player_contract_endArray.append(player_contract_end)
+            player_date_of_birthArray.append(player_date_of_birth)
+            indexArray.append(count)
 
     print("Player Name Array : ", player_nameArray)
 
@@ -246,11 +256,13 @@ def main():
     element = browser.find_element(
         By.XPATH, '//*[@id="schnellsuche"]/input[1]')
     # Getting the user input
-    league_name = input("Please enter the leaugue name(strictly same name no spelling mistakes please): ")
+    clear_console()
+    league_name = input(
+        "Please enter the leaugue name(strictly same name no spelling mistakes please): ")
     element.send_keys(league_name)
-    time.sleep(15)
+    # time.sleep(15)
 
-    search_the_league = WebDriverWait(browser, 50).until(
+    search_the_league = WebDriverWait(browser, 70).until(
         EC.presence_of_element_located((By.XPATH, '//*[@id="schnellsuche"]/input[2]')))
     search_the_league.click()
 
@@ -263,14 +275,14 @@ def main():
     # And now Passing arguement league url to the function findAllClubsInALeague
     all_clubs_in_league_url_array = findAllClubsInALeague(league_url, browser)
 
-    print("Got All the clubs url where I have to go now i will go : ")
-    print(all_clubs_in_league_url_array)
+    #print("Got All the clubs url where I have to go now i will go : ")
+    # print(all_clubs_in_league_url_array)
 
     # url_for_players_of_league = "https://www.transfermarkt.us/vissel-kobe/startseite/verein/3958/saison_id/2021/"
 
     findAllPlayersInClub(all_clubs_in_league_url_array, browser)
 
-    time.sleep(25)
+    # time.sleep(25)
 
 
 main()
