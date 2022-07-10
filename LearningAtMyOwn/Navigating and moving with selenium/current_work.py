@@ -1,3 +1,11 @@
+# Pre-requisites
+
+# You need to install the following packages in order to run this project.
+
+# 1- pip install selenium
+# 2- pip install beautifulsoup4
+# 3- pip install pandas 
+
 from asyncio.windows_events import NULL
 import os
 from xml.etree.ElementPath import xpath_tokenizer
